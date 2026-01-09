@@ -131,82 +131,234 @@ function RayfieldKeyLoader.Start(opts)
         local AttemptsRemaining = MaxAttempts
 
         local screen = Instance.new("ScreenGui")
-        screen.Name = "Rayfield_KeyUI"
+        screen.Name = "KeyUI"
         screen.ResetOnSpawn = false
 
-        local main = Instance.new("Frame")
-        main.Size = UDim2.new(0, 480, 0, 200)
-        main.Position = UDim2.new(0.5, -240, 0.5, -100)
-        main.BackgroundColor3 = Color3.fromRGB(30,30,30)
-        main.Parent = screen
+        -- Main container (KeyMain)
+        local KeyMain = Instance.new("Frame")
+        KeyMain.Name = "Main"
+        KeyMain.Size = UDim2.new(0, 467, 0, 175)
+        KeyMain.AnchorPoint = Vector2.new(0.5, 0.5)
+        KeyMain.Position = UDim2.new(0.5, 0.5, 0, 0)
+        KeyMain.BackgroundColor3 = Color3.fromRGB(20,20,20)
+        KeyMain.BackgroundTransparency = 1
+        KeyMain.Parent = screen
 
-        local title = Instance.new("TextLabel")
-        title.Size = UDim2.new(1, -20, 0, 32)
-        title.Position = UDim2.new(0, 10, 0, 10)
-        title.BackgroundTransparency = 1
-        title.Text = KeySettings.Title or Settings.Name or "Key System"
-        title.TextColor3 = Color3.new(1,1,1)
-        title.TextScaled = true
-        title.Parent = main
+        local Shadow = Instance.new("ImageLabel")
+        Shadow.Name = "Shadow"
+        Shadow.Size = UDim2.new(1, 60, 1, 60)
+        Shadow.Position = UDim2.new(-0.05, 0, -0.05, 0)
+        Shadow.Image = "rbxassetid://0"
+        Shadow.BackgroundTransparency = 1
+        Shadow.ImageTransparency = 1
+        Shadow.Parent = KeyMain
 
-        local input = Instance.new("TextBox")
-        input.Size = UDim2.new(1, -40, 0, 32)
-        input.Position = UDim2.new(0, 20, 0, 80)
-        input.Text = ""
-        input.ClearTextOnFocus = false
-        input.PlaceholderText = "Enter key..."
-        input.TextColor3 = Color3.new(1,1,1)
-        input.BackgroundColor3 = Color3.fromRGB(40,40,40)
-        input.Parent = main
+        local Title = Instance.new("TextLabel")
+        Title.Name = "Title"
+        Title.Size = UDim2.new(1, -20, 0, 28)
+        Title.Position = UDim2.new(0, 10, 0, 8)
+        Title.BackgroundTransparency = 1
+        Title.Text = KeySettings.Title or Settings.Name or "Key System"
+        Title.TextColor3 = Color3.fromRGB(255,255,255)
+        Title.TextTransparency = 1
+        Title.TextScaled = true
+        Title.Parent = KeyMain
 
-        local submit = Instance.new("TextButton")
-        submit.Size = UDim2.new(0, 100, 0, 30)
-        submit.Position = UDim2.new(1, -120, 1, -40)
-        submit.Text = "Submit"
-        submit.Parent = main
+        local Subtitle = Instance.new("TextLabel")
+        Subtitle.Name = "Subtitle"
+        Subtitle.Size = UDim2.new(1, -20, 0, 20)
+        Subtitle.Position = UDim2.new(0, 10, 0, 36)
+        Subtitle.BackgroundTransparency = 1
+        Subtitle.Text = KeySettings.Subtitle or "Key System"
+        Subtitle.TextColor3 = Color3.fromRGB(200,200,200)
+        Subtitle.TextTransparency = 1
+        Subtitle.TextScaled = false
+        Subtitle.Parent = KeyMain
 
-        local hide = Instance.new("TextButton")
-        hide.Size = UDim2.new(0, 60, 0, 24)
-        hide.Position = UDim2.new(1, -80, 0, 10)
-        hide.Text = "Hide"
-        hide.Parent = main
+        local KeyNote = Instance.new("TextLabel")
+        KeyNote.Name = "KeyNote"
+        KeyNote.Size = UDim2.new(1, -20, 0, 20)
+        KeyNote.Position = UDim2.new(0, 10, 0, 60)
+        KeyNote.BackgroundTransparency = 1
+        KeyNote.Text = KeySettings.Note or "No instructions"
+        KeyNote.TextColor3 = Color3.fromRGB(180,180,180)
+        KeyNote.TextTransparency = 1
+        KeyNote.Parent = KeyMain
 
-        local function onSuccess(foundKey)
-            pcall(function()
-                TweenService:Create(main, TweenInfo.new(0.4), {BackgroundTransparency = 1}):Play()
-            end)
-            task.wait(0.5)
-            screen:Destroy()
-        end
+        local Input = Instance.new("Frame")
+        Input.Name = "Input"
+        Input.Size = UDim2.new(1, -40, 0, 36)
+        Input.Position = UDim2.new(0, 20, 0, 86)
+        Input.BackgroundColor3 = Color3.fromRGB(40,40,40)
+        Input.BackgroundTransparency = 1
+        Input.Parent = KeyMain
 
-        local function onFailure()
-            AttemptsRemaining = AttemptsRemaining - 1
-            input.Text = ""
-            if AttemptsRemaining <= 0 then
-                -- replicate Rayfield behaviour: kick/shutdown when out of attempts
-                if Players and Players.LocalPlayer then
-                    pcall(function() Players.LocalPlayer:Kick("No Attempts Remaining") end)
+        local UIStroke = Instance.new("UIStroke")
+        UIStroke.Name = "UIStroke"
+        UIStroke.Parent = Input
+        UIStroke.Transparency = 1
+
+        local InputBox = Instance.new("TextBox")
+        InputBox.Name = "InputBox"
+        InputBox.Size = UDim2.new(1, -10, 1, -6)
+        InputBox.Position = UDim2.new(0, 5, 0, 3)
+        InputBox.BackgroundTransparency = 1
+        InputBox.Text = ""
+        InputBox.TextTransparency = 1
+        InputBox.PlaceholderText = "Enter key..."
+        InputBox.TextColor3 = Color3.fromRGB(255,255,255)
+        InputBox.Parent = Input
+
+        local NoteTitle = Instance.new("TextLabel")
+        NoteTitle.Name = "NoteTitle"
+        NoteTitle.Size = UDim2.new(1, -20, 0, 18)
+        NoteTitle.Position = UDim2.new(0, 10, 0, 126)
+        NoteTitle.BackgroundTransparency = 1
+        NoteTitle.Text = "Note"
+        NoteTitle.TextColor3 = Color3.fromRGB(200,200,200)
+        NoteTitle.TextTransparency = 1
+        NoteTitle.Parent = KeyMain
+
+        local NoteMessage = Instance.new("TextLabel")
+        NoteMessage.Name = "NoteMessage"
+        NoteMessage.Size = UDim2.new(1, -20, 0, 24)
+        NoteMessage.Position = UDim2.new(0, 10, 0, 144)
+        NoteMessage.BackgroundTransparency = 1
+        NoteMessage.Text = KeySettings.Note or "No instructions"
+        NoteMessage.TextColor3 = Color3.fromRGB(180,180,180)
+        NoteMessage.TextTransparency = 1
+        NoteMessage.Parent = KeyMain
+
+        local Hide = Instance.new("ImageButton")
+        Hide.Name = "Hide"
+        Hide.Size = UDim2.new(0, 28, 0, 28)
+        Hide.Position = UDim2.new(1, -40, 0, 8)
+        Hide.BackgroundTransparency = 1
+        Hide.Image = "rbxassetid://0"
+        Hide.ImageTransparency = 1
+        Hide.Parent = KeyMain
+
+        -- initial animate in (matching Rayfield timings)
+        KeyMain.Size = UDim2.new(0, 467, 0, 175)
+        KeyMain.BackgroundTransparency = 1
+        Shadow.ImageTransparency = 1
+        Title.TextTransparency = 1
+        Subtitle.TextTransparency = 1
+        KeyNote.TextTransparency = 1
+        Input.BackgroundTransparency = 1
+        UIStroke.Transparency = 1
+        InputBox.TextTransparency = 1
+        NoteTitle.TextTransparency = 1
+        NoteMessage.TextTransparency = 1
+        Hide.ImageTransparency = 1
+
+        TweenService:Create(KeyMain, TweenInfo.new(0.6, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0}):Play()
+        TweenService:Create(KeyMain, TweenInfo.new(0.6, Enum.EasingStyle.Exponential), {Size = UDim2.new(0, 500, 0, 187)}):Play()
+        TweenService:Create(Shadow, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {ImageTransparency = 0.5}):Play()
+        task.wait(0.05)
+        TweenService:Create(Title, TweenInfo.new(0.4, Enum.EasingStyle.Exponential), {TextTransparency = 0}):Play()
+        TweenService:Create(Subtitle, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {TextTransparency = 0}):Play()
+        task.wait(0.05)
+        TweenService:Create(KeyNote, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {TextTransparency = 0}):Play()
+        TweenService:Create(Input, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0}):Play()
+        TweenService:Create(UIStroke, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {Transparency = 0}):Play()
+        TweenService:Create(InputBox, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {TextTransparency = 0}):Play()
+        task.wait(0.05)
+        TweenService:Create(NoteTitle, TweenInfo.new(0.4, Enum.EasingStyle.Exponential), {TextTransparency = 0}):Play()
+        TweenService:Create(NoteMessage, TweenInfo.new(0.4, Enum.EasingStyle.Exponential), {TextTransparency = 0}):Play()
+        task.wait(0.15)
+        TweenService:Create(Hide, TweenInfo.new(0.4, Enum.EasingStyle.Exponential), {ImageTransparency = 0.3}):Play()
+
+        -- Connect behavior
+        InputBox.FocusLost:Connect(function(enterPressed)
+            if #InputBox.Text == 0 then return end
+            local KeyFound, FoundKey = false, ''
+            for _, MKey in ipairs(KeySettings.Key) do
+                if InputBox.Text == MKey then
+                    KeyFound = true
+                    FoundKey = MKey
                 end
-                pcall(function() game:Shutdown() end)
             end
-        end
-
-        submit.MouseButton1Click:Connect(function()
-            local ok, found = CheckKey(input.Text)
-            if ok then
-                onSuccess(found)
+            if KeyFound then
+                TweenService:Create(KeyMain, TweenInfo.new(0.6, Enum.EasingStyle.Exponential), {BackgroundTransparency = 1}):Play()
+                TweenService:Create(KeyMain, TweenInfo.new(0.6, Enum.EasingStyle.Exponential), {Size = UDim2.new(0, 467, 0, 175)}):Play()
+                TweenService:Create(Shadow, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {ImageTransparency = 1}):Play()
+                TweenService:Create(Title, TweenInfo.new(0.4, Enum.EasingStyle.Exponential), {TextTransparency = 1}):Play()
+                TweenService:Create(Subtitle, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {TextTransparency = 1}):Play()
+                TweenService:Create(KeyNote, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {TextTransparency = 1}):Play()
+                TweenService:Create(Input, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {BackgroundTransparency = 1}):Play()
+                TweenService:Create(UIStroke, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {Transparency = 1}):Play()
+                TweenService:Create(InputBox, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {TextTransparency = 1}):Play()
+                TweenService:Create(NoteTitle, TweenInfo.new(0.4, Enum.EasingStyle.Exponential), {TextTransparency = 1}):Play()
+                TweenService:Create(NoteMessage, TweenInfo.new(0.4, Enum.EasingStyle.Exponential), {TextTransparency = 1}):Play()
+                TweenService:Create(Hide, TweenInfo.new(0.4, Enum.EasingStyle.Exponential), {ImageTransparency = 1}):Play()
+                task.wait(0.51)
+                Passthrough = true
+                KeyMain.Visible = false
+                if KeySettings.SaveKey then
+                    if writefile then
+                        writefile(RayfieldFolder.."/Key System".."/"..KeySettings.FileName..".json", FoundKey)
+                    end
+                    if RayfieldLibrary and RayfieldLibrary.Notify then
+                        pcall(RayfieldLibrary.Notify, RayfieldLibrary, {Title = "Key System", Content = "The key for this script has been saved successfully.", Image = 3605522284})
+                    end
+                end
             else
-                onFailure()
+                if AttemptsRemaining == 0 then
+                    TweenService:Create(KeyMain, TweenInfo.new(0.6, Enum.EasingStyle.Exponential), {BackgroundTransparency = 1}):Play()
+                    TweenService:Create(KeyMain, TweenInfo.new(0.6, Enum.EasingStyle.Exponential), {Size = UDim2.new(0, 467, 0, 175)}):Play()
+                    TweenService:Create(Shadow, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {ImageTransparency = 1}):Play()
+                    TweenService:Create(Title, TweenInfo.new(0.4, Enum.EasingStyle.Exponential), {TextTransparency = 1}):Play()
+                    TweenService:Create(Subtitle, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {TextTransparency = 1}):Play()
+                    TweenService:Create(KeyNote, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {TextTransparency = 1}):Play()
+                    TweenService:Create(Input, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {BackgroundTransparency = 1}):Play()
+                    TweenService:Create(UIStroke, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {Transparency = 1}):Play()
+                    TweenService:Create(InputBox, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {TextTransparency = 1}):Play()
+                    TweenService:Create(NoteTitle, TweenInfo.new(0.4, Enum.EasingStyle.Exponential), {TextTransparency = 1}):Play()
+                    TweenService:Create(NoteMessage, TweenInfo.new(0.4, Enum.EasingStyle.Exponential), {TextTransparency = 1}):Play()
+                    TweenService:Create(Hide, TweenInfo.new(0.4, Enum.EasingStyle.Exponential), {ImageTransparency = 1}):Play()
+                    task.wait(0.45)
+                    if Players and Players.LocalPlayer then pcall(function() Players.LocalPlayer:Kick("No Attempts Remaining") end) end
+                    pcall(function() game:Shutdown() end)
+                end
+                InputBox.Text = ""
+                AttemptsRemaining = AttemptsRemaining - 1
+                TweenService:Create(KeyMain, TweenInfo.new(0.6, Enum.EasingStyle.Exponential), {Size = UDim2.new(0, 467, 0, 175)}):Play()
+                TweenService:Create(KeyMain, TweenInfo.new(0.4, Enum.EasingStyle.Elastic), {Position = UDim2.new(0.495,0,0.5,0)}):Play()
+                task.wait(0.1)
+                TweenService:Create(KeyMain, TweenInfo.new(0.4, Enum.EasingStyle.Elastic), {Position = UDim2.new(0.505,0,0.5,0)}):Play()
+                task.wait(0.1)
+                TweenService:Create(KeyMain, TweenInfo.new(0.4, Enum.EasingStyle.Exponential), {Position = UDim2.new(0.5,0,0.5,0)}):Play()
+                TweenService:Create(KeyMain, TweenInfo.new(0.6, Enum.EasingStyle.Exponential), {Size = UDim2.new(0, 500, 0, 187)}):Play()
             end
         end)
 
-        hide.MouseButton1Click:Connect(function()
-            screen.Enabled = false
+        Hide.MouseButton1Click:Connect(function()
+            TweenService:Create(KeyMain, TweenInfo.new(0.6, Enum.EasingStyle.Exponential), {BackgroundTransparency = 1}):Play()
+            TweenService:Create(KeyMain, TweenInfo.new(0.6, Enum.EasingStyle.Exponential), {Size = UDim2.new(0, 467, 0, 175)}):Play()
+            TweenService:Create(Shadow, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {ImageTransparency = 1}):Play()
+            TweenService:Create(Title, TweenInfo.new(0.4, Enum.EasingStyle.Exponential), {TextTransparency = 1}):Play()
+            TweenService:Create(Subtitle, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {TextTransparency = 1}):Play()
+            TweenService:Create(KeyNote, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {TextTransparency = 1}):Play()
+            TweenService:Create(Input, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {BackgroundTransparency = 1}):Play()
+            TweenService:Create(UIStroke, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {Transparency = 1}):Play()
+            TweenService:Create(InputBox, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {TextTransparency = 1}):Play()
+            TweenService:Create(NoteTitle, TweenInfo.new(0.4, Enum.EasingStyle.Exponential), {TextTransparency = 1}):Play()
+            TweenService:Create(NoteMessage, TweenInfo.new(0.4, Enum.EasingStyle.Exponential), {TextTransparency = 1}):Play()
+            TweenService:Create(Hide, TweenInfo.new(0.4, Enum.EasingStyle.Exponential), {ImageTransparency = 1}):Play()
+            task.wait(0.51)
+            if RayfieldLibrary and RayfieldLibrary.Destroy then pcall(RayfieldLibrary.Destroy, RayfieldLibrary) end
+            screen:Destroy()
         end)
 
         -- attach to player UI
         if gethui then
             screen.Parent = gethui()
+        elseif syn and syn.protect_gui then
+            syn.protect_gui(screen)
+            screen.Parent = CoreGui
+        elseif not useStudio and CoreGui:FindFirstChild("RobloxGui") then
+            screen.Parent = CoreGui:FindFirstChild("RobloxGui")
         else
             screen.Parent = CoreGui
         end
